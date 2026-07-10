@@ -1,91 +1,96 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Mail, Plane, ArrowLeft, CheckCircle } from 'lucide-react'
-import Input from '../components/Input.jsx'
-import Button from '../components/Button.jsx'
+import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import AuthLayout from '../components/AuthLayout.jsx'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (email) setSent(true)
+    if (!email) {
+      setError('Email address is required.')
+      return
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('Enter a valid email address.')
+      return
+    }
+    setError('')
+    setSent(true)
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-        {/* Logo */}
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <Plane size={15} className="text-white" fill="white" />
+    <AuthLayout
+      title="Reset your password"
+      subtitle="We will send you a secure link to reset your account credentials"
+    >
+      {sent ? (
+        <div className="text-center py-4 space-y-4">
+          <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto text-green-600">
+            <CheckCircle2 size={24} />
           </div>
-          <span className="text-xl font-bold text-slate-900">
-            Sky<span className="text-blue-600">Desk</span>
-          </span>
-        </div>
-
-        {sent ? (
-          // Success state
-          <div className="text-center py-4">
-            <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle size={28} className="text-green-600" />
-            </div>
-            <h1 className="text-xl font-bold text-slate-900 mb-2">Check your inbox</h1>
-            <p className="text-slate-500 text-sm mb-6">
-              We've sent a password reset link to{' '}
-              <span className="font-medium text-slate-700">{email}</span>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Check your inbox</h3>
+            <p className="text-sm text-slate-500 mt-1">
+              We have sent a password reset link to <span className="font-semibold text-slate-700">{email}</span>.
             </p>
+          </div>
+          <div className="pt-2">
             <Link
-              to="/login"
-              className="inline-flex items-center gap-2 text-sm text-blue-600 font-medium hover:underline"
+              to="/signin"
+              className="inline-flex items-center gap-1.5 text-sm text-blue-600 font-semibold hover:underline"
             >
-              <ArrowLeft size={14} />
-              Back to Sign In
+              <ArrowLeft size={14} /> Back to Sign In
             </Link>
           </div>
-        ) : (
-          // Form state
-          <>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-slate-900">Reset your password</h1>
-              <p className="text-slate-500 text-sm mt-2">
-                Enter the email address associated with your account and we'll send you a link to reset your password.
-              </p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {error && (
+            <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-150 rounded-lg">
+              {error}
             </div>
+          )}
 
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
-              <Input
-                label="Email Address"
+          <div className="flex flex-col">
+            <label htmlFor="email" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <input
                 id="email"
-                name="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="name@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                icon={Mail}
                 required
                 autoComplete="email"
+                className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
-
-              <Button type="submit" fullWidth size="lg" disabled={!email}>
-                Send Reset Link
-              </Button>
-            </form>
-
-            <div className="flex justify-center mt-5">
-              <Link
-                to="/login"
-                className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-600 font-medium transition-colors duration-150"
-              >
-                <ArrowLeft size={14} />
-                Back to Sign In
-              </Link>
             </div>
-          </>
-        )}
-      </div>
-    </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 mt-2 cursor-pointer"
+          >
+            Send Reset Link
+          </button>
+
+          <div className="flex justify-center mt-5">
+            <Link
+              to="/signin"
+              className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-600 font-semibold transition-colors duration-150"
+            >
+              <ArrowLeft size={14} /> Back to Sign In
+            </Link>
+          </div>
+        </form>
+      )}
+    </AuthLayout>
   )
 }
