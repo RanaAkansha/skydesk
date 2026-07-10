@@ -1,0 +1,87 @@
+{
+  "stats": [
+    {
+      "id": 1,
+      "title": "Total Flights",
+      "value": "1,284",
+      "icon": "Plane",
+      "trend": "+12.5%",
+      "trendType": "up",
+      "color": "blue",
+      "description": "vs last month"
+    },
+    {
+      "id": 2,
+      "title": "Today's Bookings",
+      "value": "348",
+      "icon": "CalendarCheck",
+      "trend": "+8.2%",
+      "trendType": "up",
+      "color": "orange",
+      "description": "vs yesterday"
+    },
+    {
+      "id": 3,
+      "title": "Revenue",
+      "value": "₹42.8L",
+      "icon": "IndianRupee",
+      "trend": "+18.3%",
+      "trendType": "up",
+      "color": "green",
+      "description": "vs last month"
+    },
+    {
+      "id": 4,
+      "title": "Cancelled Tickets",
+      "value": "67",
+      "icon": "XCircle",
+      "trend": "-3.1%",
+      "trendType": "down",
+      "color": "red",
+      "description": "vs last month"
+    },
+    {
+      "id": 5,
+      "title": "Pending Payments",
+      "value": "124",
+      "icon": "Clock",
+      "trend": "+2.4%",
+      "trendType": "up",
+      "color": "yellow",
+      "description": "vs last week"
+    },
+    {
+      "id": 6,
+      "title": "Active Airlines",
+      "value": "18",
+      "icon": "Building2",
+      "trend": "+1",
+      "trendType": "up",
+      "color": "purple",
+      "description": "new this month"
+    }
+  ],
+  "bookingTrend": [
+    { "day": "Mon", "bookings": 210 },
+    { "day": "Tue", "bookings": 280 },
+    { "day": "Wed", "bookings": 245 },
+    { "day": "Thu", "bookings": 310 },
+    { "day": "Fri", "bookings": 390 },
+    { "day": "Sat", "bookings": 460 },
+    { "day": "Sun", "bookings": 348 }
+  ],
+  "revenueData": [
+    { "month": "Jan", "revenue": 3200000 },
+    { "month": "Feb", "revenue": 2800000 },
+    { "month": "Mar", "revenue": 3600000 },
+    { "month": "Apr", "revenue": 4100000 },
+    { "month": "May", "revenue": 3900000 },
+    { "month": "Jun", "revenue": 4500000 },
+    { "month": "Jul", "revenue": 4280000 }
+  ],
+  "bookingStatus": [
+    { "name": "Confirmed", "value": 68, "color": "#22C55E" },
+    { "name": "Pending", "value": 22, "color": "#F59E0B" },
+    { "name": "Cancelled", "value": 10, "color": "#EF4444" }
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "N-001",
+    "type": "success",
+    "icon": "CheckCircle",
+    "title": "Booking Confirmed",
+    "message": "Booking BK-10434 for Divya Iyer (QR-551 to Doha) has been confirmed.",
+    "timestamp": "2024-07-10T09:15:00Z",
+    "read": false
+  },
+  {
+    "id": "N-002",
+    "type": "warning",
+    "icon": "AlertTriangle",
+    "title": "Flight Delayed",
+    "message": "SpiceJet SG-801 (Hyderabad → Chennai) is delayed by 45 minutes. New departure: 12:30.",
+    "timestamp": "2024-07-10T08:42:00Z",
+    "read": false
+  },
+  {
+    "id": "N-003",
+    "type": "success",
+    "icon": "IndianRupee",
+    "title": "Payment Received",
+    "message": "Payment of ₹31,200 received for booking BK-10427 (Emirates EK-501).",
+    "timestamp": "2024-07-10T08:10:00Z",
+    "read": false
+  },
+  {
+    "id": "N-004",
+    "type": "info",
+    "icon": "RefreshCw",
+    "title": "Refund Initiated",
+    "message": "Refund of ₹38,500 initiated for cancelled booking BK-10425 (Qatar Airways QR-562).",
+    "timestamp": "2024-07-10T07:55:00Z",
+    "read": true
+  },
+  {
+    "id": "N-005",
+    "type": "success",
+    "icon": "CheckCircle",
+    "title": "Booking Confirmed",
+    "message": "Booking BK-10427 for Vikram Singh (EK-501 to Dubai) has been confirmed.",
+    "timestamp": "2024-07-10T07:30:00Z",
+    "read": true
+  },
+  {
+    "id": "N-006",
+    "type": "danger",
+    "icon": "XCircle",
+    "title": "Booking Cancelled",
+    "message": "Booking BK-10435 for Manish Saxena (IndiGo 6E-901 to Lucknow) has been cancelled.",
+    "timestamp": "2024-07-10T06:50:00Z",
+    "read": true
+  },
+  {
+    "id": "N-007",
+    "type": "info",
+    "icon": "Bell",
+    "title": "New Airline Added",
+    "message": "Singapore Airlines has been added to the platform and is now accepting bookings.",
+    "timestamp": "2024-07-09T18:00:00Z",
+    "read": true
+  },
+  {
+    "id": "N-008",
+    "type": "warning",
+    "icon": "Clock",
+    "title": "Payment Pending",
+    "message": "Payment for 12 bookings is still pending. Please review and follow up.",
+    "timestamp": "2024-07-09T14:30:00Z",
+    "read": true
+  }
+]
