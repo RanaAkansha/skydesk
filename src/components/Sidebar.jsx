@@ -1,155 +1,121 @@
-import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard,
-  PlaneTakeoff,
-  Ticket,
-  Users,
-  Settings,
-  X,
-  Plane,
-  AlertCircle
+  LayoutDashboard, MapPin, Ticket, Heart, Bookmark,
+  Wallet, Tag, HeadphonesIcon, User, Settings, LogOut,
+  ChevronRight, Plane
 } from 'lucide-react'
+import profile from '../data/profile.json'
 
-export default function Sidebar({ open, onClose }) {
-  const [toastMessage, setToastMessage] = useState('')
+const navItems = [
+  { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { label: 'My Trips', icon: MapPin, path: '/my-trips' },
+  { label: 'Bookings', icon: Ticket, path: '/bookings' },
+  { label: 'Saved Flights', icon: Bookmark, path: '/saved-flights' },
+  { label: 'Wishlist', icon: Heart, path: '/wishlist' },
+  { label: 'Travel Wallet', icon: Wallet, path: '/wallet' },
+  { label: 'Offers', icon: Tag, path: '/offers' },
+]
 
-  useEffect(() => {
-    if (toastMessage) {
-      const timer = setTimeout(() => {
-        setToastMessage('')
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [toastMessage])
+const bottomItems = [
+  { label: 'Support', icon: HeadphonesIcon, path: '/support' },
+  { label: 'Profile', icon: User, path: '/profile' },
+  { label: 'Settings', icon: Settings, path: '/settings' },
+]
 
-  const menuItems = [
-    { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard', active: true },
-    { label: 'Flights Manager', icon: PlaneTakeoff, path: '#', active: false },
-    { label: 'Booking Flow', icon: Ticket, path: '#', active: false },
-    { label: 'User Directory', icon: Users, path: '#', active: false },
-    { label: 'Settings', icon: Settings, path: '#', active: false }
-  ]
-
-  function handleMenuClick(e, item) {
-    if (!item.active) {
-      e.preventDefault()
-      setToastMessage(`"${item.label}" is assigned to another module.`)
-    } else {
-      onClose()
-    }
-  }
-
+export default function Sidebar({ isOpen, onClose }) {
   return (
     <>
-      {/* Toast Notification Container */}
-      {toastMessage && (
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-slate-900 border border-slate-800 text-slate-100 px-4 py-3 rounded-lg shadow-xl text-xs font-semibold animate-fade-in-up">
-          <AlertCircle size={15} className="text-blue-500" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      {/* Mobile Backdrop */}
-      {open && (
+      {/* Overlay for mobile */}
+      {isOpen && (
         <div
-          className="fixed inset-0 bg-slate-950/40 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
           onClick={onClose}
-          aria-hidden="true"
         />
       )}
 
-      {/* Sidebar container */}
-      <aside
-        className={[
-          'fixed top-0 left-0 h-full w-64 bg-white border-r border-slate-200 z-50 flex flex-col transition-transform duration-300 ease-in-out',
-          'lg:translate-x-0 lg:static lg:z-auto',
-          open ? 'translate-x-0' : '-translate-x-full'
-        ].join(' ')}
-      >
-        {/* Header Branding */}
-        <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100 flex-shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Plane size={16} className="text-white fill-white" />
-            </div>
-            <span className="text-lg font-bold text-slate-900">
-              Sky<span className="text-blue-600">Desk</span>
-            </span>
-          </div>
+      {/* Sidebar */}
+      <aside className={`
+        fixed top-16 left-0 bottom-0 z-40 w-64 bg-white border-r border-slate-100 flex flex-col
+        transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
 
-          <button
-            onClick={onClose}
-            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus:outline-none"
-            aria-label="Close sidebar"
-          >
-            <X size={18} />
-          </button>
+        {/* User mini-profile */}
+        <div className="px-4 py-4 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-sm font-bold shrink-0">
+              {profile.initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-slate-800 truncate">{profile.name}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-xs bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded-full font-medium">
+                  ⭐ {profile.membership}
+                </span>
+                <span className="text-xs text-slate-400">{profile.loyaltyPoints.toLocaleString()} pts</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Sidebar Navigation Links */}
-        <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-7">
-          <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2.5">
-              Operations Center
-            </p>
-            <ul className="space-y-1">
-              {menuItems.map((item) => {
-                const Icon = item.icon
-                return (
-                  <li key={item.label}>
-                    {item.active ? (
-                      <NavLink
-                        to={item.path}
-                        onClick={(e) => handleMenuClick(e, item)}
-                        className={({ isActive }) =>
-                          [
-                            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors duration-150',
-                            isActive
-                              ? 'bg-slate-900 text-white'
-                              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                          ].join(' ')
-                        }
-                      >
-                        {({ isActive }) => (
-                          <>
-                            <Icon
-                              size={18}
-                              className={isActive ? 'text-white' : 'text-slate-400'}
-                              strokeWidth={2}
-                            />
-                            <span>{item.label}</span>
-                          </>
-                        )}
-                      </NavLink>
-                    ) : (
-                      <a
-                        href={item.path}
-                        onClick={(e) => handleMenuClick(e, item)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
-                      >
-                        <Icon size={18} className="text-slate-400" strokeWidth={2} />
-                        <span>{item.label}</span>
-                        <span className="ml-auto text-[9px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded uppercase tracking-wide group-hover:bg-slate-200">
-                          External
-                        </span>
-                      </a>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
+        {/* Nav items */}
+        <nav className="flex-1 overflow-y-auto py-3 px-3">
+          <div className="space-y-0.5">
+            {navItems.map(({ label, icon: Icon, path }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group
+                  ${isActive
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-200'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon size={18} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'} />
+                    <span className="flex-1">{label}</span>
+                    {isActive && <ChevronRight size={14} />}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-100 space-y-0.5">
+            {bottomItems.map(({ label, icon: Icon, path }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group
+                  ${isActive
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-200'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon size={18} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'} />
+                    <span>{label}</span>
+                  </>
+                )}
+              </NavLink>
+            ))}
           </div>
         </nav>
 
-        {/* User Workspace Info Footer */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50 text-[10px] text-slate-400 font-semibold space-y-1">
-          <p className="uppercase text-slate-500 font-bold">Workspace Status</p>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-            <span>Node Status: Operational</span>
-          </div>
-          <p>Version: 1.4.2-staging</p>
+        {/* Logout */}
+        <div className="p-3 border-t border-slate-100">
+          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
     </>

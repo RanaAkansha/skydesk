@@ -1,82 +1,153 @@
-import { Ticket, PlaneTakeoff, DollarSign, Users as UsersIcon } from 'lucide-react'
-import StatCard from '../components/StatCard.jsx'
-import ChartCard from '../components/ChartCard.jsx'
-import RecentActivity from '../components/RecentActivity.jsx'
-import {
-  statCardsData,
-  bookingTrendsData,
-  ticketDistributionData,
-  recentActivitiesData
-} from '../data/dashboardData.js'
+import { PlaneTakeoff, ArrowRight, Search } from 'lucide-react'
+import SearchFlightCard from '../components/SearchFlightCard.jsx'
+import UpcomingTripCard from '../components/UpcomingTripCard.jsx'
+import BookingCard from '../components/BookingCard.jsx'
+import DestinationCard from '../components/DestinationCard.jsx'
+import OfferCard from '../components/OfferCard.jsx'
+import TravelTipCard from '../components/TravelTipCard.jsx'
+import QuickActions from '../components/QuickActions.jsx'
+import ProfileCard from '../components/ProfileCard.jsx'
+
+import bookings from '../data/bookings.json'
+import offers from '../data/offers.json'
+import destinations from '../data/destinations.json'
+import recentSearches from '../data/recentSearches.json'
+import travelTips from '../data/travelTips.json'
+import profile from '../data/profile.json'
 
 export default function Dashboard() {
-  // Map our type strings to specific Lucide icons
-  const iconMap = {
-    bookings: Ticket,
-    flights: PlaneTakeoff,
-    revenue: DollarSign,
-    users: UsersIcon
-  }
-
-  // Get current date string for header
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const today = new Date().toLocaleDateString('en-IN', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 
+  const upcomingBooking = bookings.find(b => b.upcoming)
+  const recentBookings = bookings.filter(b => !b.upcoming).slice(0, 4)
+
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+    <div className="space-y-8">
+
+      {/* ── Welcome Section ─────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Operations Console</h1>
-          <p className="text-xs font-semibold text-slate-400 mt-1">
-            Real-time control tower overview for global bookings and flight routes.
-          </p>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            Hello, {profile.firstName}! 👋
+          </h1>
+          <p className="text-slate-500 mt-1">Ready for your next journey?</p>
+          <p className="text-slate-400 text-sm mt-0.5">{today}</p>
         </div>
-        <div className="text-left md:text-right font-medium text-slate-500 text-xs">
-          <p className="font-bold text-slate-700">{currentDate}</p>
-          <p className="text-[10px] text-green-600 flex items-center gap-1 mt-0.5 font-bold">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block" /> All services online
-          </p>
+        <button className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:shadow-lg hover:shadow-orange-200 transition-all active:scale-95 shrink-0">
+          <PlaneTakeoff size={18} />
+          Book Flight
+          <ArrowRight size={16} />
+        </button>
+      </div>
+
+      {/* ── Search Card ─────────────────────────────────────── */}
+      <SearchFlightCard />
+
+      {/* ── Main 2-column layout ────────────────────────────── */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        {/* Left column (2/3 wide) */}
+        <div className="xl:col-span-2 space-y-8">
+
+          {/* Upcoming Trip */}
+          {upcomingBooking && (
+            <section>
+              <SectionHeader title="Upcoming Trip" link="View all trips" />
+              <UpcomingTripCard booking={upcomingBooking} />
+            </section>
+          )}
+
+          {/* Recent Searches */}
+          <section>
+            <SectionHeader title="Recent Searches" link="Clear all" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {recentSearches.map(s => (
+                <div key={s.id} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-blue-200 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Search size={14} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+                    <span className="text-xs text-slate-400">{new Date(s.searchedOn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-extrabold text-slate-900 text-base">{s.fromCode}</span>
+                    <ArrowRight size={14} className="text-slate-400" />
+                    <span className="font-extrabold text-slate-900 text-base">{s.toCode}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mb-3">{s.from} → {s.to}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">{s.passengers} Pax · {s.class}</span>
+                    <button className="text-xs font-bold text-blue-600 border border-blue-200 px-2.5 py-1 rounded-lg hover:bg-blue-50 transition-colors">
+                      Quick Book
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* My Bookings */}
+          <section>
+            <SectionHeader title="My Bookings" link="View all" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {recentBookings.map(b => (
+                <BookingCard key={b.id} booking={b} />
+              ))}
+            </div>
+          </section>
+
+          {/* Popular Destinations */}
+          <section>
+            <SectionHeader title="Popular Destinations" link="See all" />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {destinations.map(d => (
+                <DestinationCard key={d.id} destination={d} />
+              ))}
+            </div>
+          </section>
+
+          {/* Special Offers */}
+          <section>
+            <SectionHeader title="Special Offers" link="View all offers" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {offers.map(o => (
+                <OfferCard key={o.id} offer={o} />
+              ))}
+            </div>
+          </section>
+
+          {/* Travel Tips */}
+          <section>
+            <SectionHeader title="Travel Tips & Alerts" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {travelTips.map(t => (
+                <TravelTipCard key={t.id} tip={t} />
+              ))}
+            </div>
+          </section>
+
+        </div>
+
+        {/* Right column (1/3 wide) */}
+        <div className="xl:col-span-1 space-y-6">
+          <ProfileCard />
+          <QuickActions />
         </div>
       </div>
+    </div>
+  )
+}
 
-      {/* Statistics Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCardsData.map((stat, i) => (
-          <StatCard
-            key={i}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            isPositive={stat.isPositive}
-            timeframe={stat.timeframe}
-            icon={iconMap[stat.type] || Ticket}
-          />
-        ))}
-      </div>
-
-      {/* Analytics Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartCard
-          title="Booking Traffic Trends"
-          subtitle="Monthly overview comparing total bookings initiated against completed trips (Jan-Jun)"
-          type="area"
-          data={bookingTrendsData}
-        />
-        <ChartCard
-          title="Revenue Generated by Ticket Class"
-          subtitle="Operational revenue allocation generated across Economy, Business, and First Class"
-          type="bar"
-          data={ticketDistributionData}
-        />
-      </div>
-
-      {/* Bottom Table: Recent Operations Activity */}
-      <RecentActivity activities={recentActivitiesData} />
+function SectionHeader({ title, link }) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+      {link && (
+        <button className="text-sm text-blue-600 font-semibold hover:underline flex items-center gap-1">
+          {link}
+          <ArrowRight size={14} />
+        </button>
+      )}
     </div>
   )
 }
