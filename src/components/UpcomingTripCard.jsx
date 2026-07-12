@@ -1,10 +1,10 @@
-import { Plane, Clock, CheckCircle, ExternalLink } from 'lucide-react'
+import { Plane, ExternalLink } from 'lucide-react'
 
 const statusStyles = {
-  Confirmed: 'bg-green-100 text-green-700',
+  Confirmed: 'bg-emerald-100 text-emerald-800',
   Completed: 'bg-slate-100 text-slate-600',
-  Cancelled: 'bg-red-100 text-red-600',
-  Pending: 'bg-yellow-100 text-yellow-700',
+  Cancelled: 'bg-red-100 text-red-700',
+  Pending: 'bg-amber-100 text-amber-800',
 }
 
 export default function UpcomingTripCard({ booking }) {
@@ -17,13 +17,14 @@ export default function UpcomingTripCard({ booking }) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-5 text-white shadow-lg shadow-blue-200 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] rounded-2xl text-white shadow-lg shadow-blue-200 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full translate-x-16 -translate-y-16 pointer-events-none" />
-      <div className="absolute bottom-0 right-8 w-24 h-24 bg-white/5 rounded-full translate-y-10 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full translate-x-20 -translate-y-20 pointer-events-none" />
+      <div className="absolute bottom-0 right-10 w-28 h-28 bg-white/5 rounded-full translate-y-12 pointer-events-none" />
 
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
+      <div className="relative z-10 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
           <div>
             <p className="text-blue-200 text-xs font-semibold uppercase tracking-wider mb-1">Upcoming Trip</p>
             <p className="text-white font-semibold text-sm">{formatDate(booking.date)}</p>
@@ -34,7 +35,7 @@ export default function UpcomingTripCard({ booking }) {
         </div>
 
         {/* Flight route */}
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-5">
           <div className="text-center">
             <p className="text-3xl font-extrabold text-white">{booking.fromCode}</p>
             <p className="text-blue-200 text-xs mt-0.5">{booking.from}</p>
@@ -58,17 +59,17 @@ export default function UpcomingTripCard({ booking }) {
         </div>
 
         {/* Flight details */}
-        <div className="grid grid-cols-3 gap-2 mb-4 py-3 border-t border-b border-white/20">
+        <div className="grid grid-cols-3 gap-3 mb-5 py-4 border-t border-b border-white/20">
           <div className="text-center">
-            <p className="text-blue-200 text-xs">Terminal</p>
+            <p className="text-blue-200 text-xs mb-0.5">Terminal</p>
             <p className="text-white font-bold text-sm">{booking.terminal}</p>
           </div>
           <div className="text-center">
-            <p className="text-blue-200 text-xs">Seat</p>
+            <p className="text-blue-200 text-xs mb-0.5">Seat</p>
             <p className="text-white font-bold text-sm">{booking.seat}</p>
           </div>
           <div className="text-center">
-            <p className="text-blue-200 text-xs">Gate</p>
+            <p className="text-blue-200 text-xs mb-0.5">Gate</p>
             <p className="text-white font-bold text-sm">{booking.gate}</p>
           </div>
         </div>
@@ -77,9 +78,9 @@ export default function UpcomingTripCard({ booking }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-blue-200 text-xs">{booking.airline}</p>
-            <p className="text-white/70 text-xs">{booking.class} · {booking.passengers} Pax</p>
+            <p className="text-white/70 text-xs mt-0.5">{booking.class} · {booking.passengers} Pax</p>
           </div>
-          <button className="flex items-center gap-2 bg-white text-blue-700 font-bold text-sm px-4 py-2 rounded-xl hover:bg-blue-50 transition-colors shadow-sm">
+          <button className="flex items-center gap-2 bg-white text-[#2563EB] font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors shadow-sm">
             View Ticket
             <ExternalLink size={14} />
           </button>

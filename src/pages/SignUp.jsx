@@ -68,8 +68,8 @@ export default function SignUp() {
 
   return (
     <AuthLayout
-      title="Create your account"
-      subtitle="Register below to get access to the admin console"
+      title="Start Your Journey"
+      subtitle="Create your account to book flights and manage your trips."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {/* Full Name */}

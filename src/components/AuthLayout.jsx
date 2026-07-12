@@ -16,7 +16,7 @@ export default function AuthLayout({ children, title, subtitle }) {
 
         {/* Logo */}
         <div className="relative z-10 flex items-center gap-2">
-          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-[#2563EB] rounded-xl flex items-center justify-center">
             <Plane size={18} className="text-white fill-white" />
           </div>
           <span className="text-2xl font-bold tracking-tight">SkyDesk</span>
@@ -57,13 +57,12 @@ export default function AuthLayout({ children, title, subtitle }) {
       {/* Right panel – Form */}
       <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="mx-auto w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-          {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-6 lg:hidden justify-center">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#2563EB] rounded-lg flex items-center justify-center">
               <Plane size={15} className="text-white fill-white" />
             </div>
             <span className="text-xl font-bold text-slate-900">
-              Sky<span className="text-blue-600">Desk</span>
+              Sky<span className="text-[#2563EB]">Desk</span>
             </span>
           </div>
 

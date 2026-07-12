@@ -24,8 +24,8 @@ export default function SignIn() {
 
   return (
     <AuthLayout
-      title="Sign in to your account"
-      subtitle="Welcome back! Sign in to manage your trips and bookings."
+      title="Welcome Back"
+      subtitle="Sign in to manage your trips and bookings."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {error && (

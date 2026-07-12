@@ -24,7 +24,7 @@ export default function ForgotPassword() {
 
   return (
     <AuthLayout
-      title="Reset your password"
+      title="Secure Your Account"
       subtitle="We will send you a secure link to reset your account credentials"
     >
       {sent ? (
