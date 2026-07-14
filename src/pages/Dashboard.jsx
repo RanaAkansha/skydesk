@@ -1,4 +1,5 @@
-import { PlaneTakeoff, ArrowRight, Search, Phone, Shield, FileText, Info, HelpCircle } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { PlaneTakeoff, ArrowRight, Search, Phone, Shield, FileText, Info, HelpCircle, Zap, Percent, Headphones, Award, Plane } from 'lucide-react'
 import SearchFlightCard from '../components/SearchFlightCard.jsx'
 import UpcomingTripCard from '../components/UpcomingTripCard.jsx'
 import BookingCard from '../components/BookingCard.jsx'
@@ -13,8 +14,11 @@ import destinations from '../data/destinations.json'
 import recentSearches from '../data/recentSearches.json'
 import travelTips from '../data/travelTips.json'
 import profile from '../data/profile.json'
+import { internationalRoutes } from '../data/expenseData.js'
+import { formatCurrency } from '../utils/formatters.js'
 
 export default function Dashboard() {
+  const navigate = useNavigate()
   const today = new Date().toLocaleDateString('en-IN', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
@@ -34,7 +38,10 @@ export default function Dashboard() {
           <p className="text-[#64748B] mt-1">Ready for your next journey?</p>
           <p className="text-[#64748B] text-sm mt-0.5">{today}</p>
         </div>
-        <button className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:shadow-lg hover:shadow-orange-200 transition-all active:scale-95 shrink-0">
+        <button
+          onClick={() => navigate('/search-results')}
+          className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:shadow-lg hover:shadow-orange-200 transition-all active:scale-95 shrink-0"
+        >
           <PlaneTakeoff size={18} />
           Book Flight
           <ArrowRight size={16} />
@@ -43,6 +50,28 @@ export default function Dashboard() {
 
       {/* ── Search Card ─────────────────────────────────────── */}
       <SearchFlightCard />
+
+      {/* Benefits Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 bg-white border border-[#E2E8F0] rounded-2xl p-4 shadow-sm">
+        {[
+          { icon: Shield, title: 'Secure Booking', desc: 'PCI DSS compliant' },
+          { icon: Zap, title: 'Instant Confirm', desc: 'Real-time ticketing' },
+          { icon: Percent, title: 'No Hidden Fees', desc: 'Full transparency' },
+          { icon: Headphones, title: '24/7 Support', desc: 'Expert travel agents' },
+          { icon: Award, title: 'Best Price', desc: 'Match guarantee' },
+          { icon: Plane, title: '500+ Airlines', desc: 'Global coverage' },
+        ].map((item, idx) => (
+          <div key={idx} className="flex items-center gap-2.5 px-2 py-1">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+              <item.icon size={16} className="text-[#2563EB]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold text-slate-800 leading-tight truncate">{item.title}</p>
+              <p className="text-[9px] text-[#64748B] font-medium leading-tight truncate">{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* ── Main layout ──────────────────────────────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -101,6 +130,49 @@ export default function Dashboard() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {destinations.map(d => (
                 <DestinationCard key={d.id} destination={d} />
+              ))}
+            </div>
+          </section>
+
+          {/* Popular International Routes */}
+          <section>
+            <SectionHeader title="Popular International Routes" link="View all routes" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {internationalRoutes.map((r) => (
+                <article
+                  key={r.city}
+                  className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all hover:border-[#2563EB]/20 group"
+                >
+                  <div className="h-36 overflow-hidden relative">
+                    <img
+                      src={r.image}
+                      alt={r.city}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-350"
+                    />
+                    <div className="absolute top-3 left-3 bg-[#2563EB] text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                      12% Drop
+                    </div>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <span className="text-[9px] font-bold text-[#2563EB] tracking-wider uppercase">Route Deal</span>
+                      <h3 className="font-extrabold text-slate-800 text-xs mt-0.5 truncate">{r.city}</h3>
+                      <p className="text-[10px] text-slate-400 font-semibold">{r.code}</p>
+                    </div>
+                    <div className="flex items-center justify-between pt-2.5 border-t border-slate-50">
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-400 block uppercase">Fares from</span>
+                        <strong className="text-xs font-black text-slate-900">{formatCurrency(r.price)}</strong>
+                      </div>
+                      <Link
+                        to="/search-results"
+                        className="text-[10px] font-bold text-[#2563EB] hover:underline flex items-center gap-0.5"
+                      >
+                        View flights →
+                      </Link>
+                    </div>
+                  </div>
+                </article>
               ))}
             </div>
           </section>

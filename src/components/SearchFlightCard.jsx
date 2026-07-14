@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ArrowRightLeft, Calendar, Users, ChevronDown, Search } from 'lucide-react'
 
 const cabinClasses = ['Economy', 'Premium Economy', 'Business', 'First Class']
@@ -10,6 +11,7 @@ const tripTypes = [
 ]
 
 export default function SearchFlightCard() {
+  const navigate = useNavigate()
   const [tripType, setTripType] = useState('round')
   const [from, setFrom] = useState('Delhi (DEL)')
   const [to, setTo] = useState('Mumbai (BOM)')
@@ -180,7 +182,10 @@ export default function SearchFlightCard() {
         </div>
 
         {/* ── Search button ────────────────────────────────────── */}
-        <button className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg hover:shadow-blue-200 active:scale-[0.99]">
+        <button
+          onClick={() => navigate('/search-results')}
+          className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg hover:shadow-blue-200 active:scale-[0.99]"
+        >
           <Search size={20} />
           Search Flights
         </button>

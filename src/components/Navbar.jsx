@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Bell, Search, Plane, ChevronDown, Menu, X, CheckCheck } from 'lucide-react'
 import profile from '../data/profile.json'
 
 export default function Navbar({ onMenuToggle, menuOpen }) {
+  const navigate = useNavigate()
   const [notifOpen, setNotifOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifications, setNotifications] = useState([
@@ -121,9 +123,22 @@ export default function Navbar({ onMenuToggle, menuOpen }) {
                 <p className="font-semibold text-slate-800 text-sm">{profile.name}</p>
                 <p className="text-xs text-slate-400 truncate">{profile.email}</p>
               </div>
-              {['My Profile', 'My Trips', 'Travel Wallet', 'Settings', 'Sign Out'].map((item) => (
-                <button key={item} className={`w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 transition-colors ${item === 'Sign Out' ? 'text-red-500 font-medium' : 'text-slate-600'}`}>
-                  {item}
+              {[
+                { name: 'My Profile', path: '/settings' },
+                { name: 'My Trips', path: '/my-trips' },
+                { name: 'Travel Wallet', path: '/wallet' },
+                { name: 'Settings', path: '/settings' },
+                { name: 'Sign Out', path: '/signin' }
+              ].map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    setProfileOpen(false)
+                    navigate(item.path)
+                  }}
+                  className={`w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 transition-colors ${item.name === 'Sign Out' ? 'text-red-500 font-medium' : 'text-slate-600'}`}
+                >
+                  {item.name}
                 </button>
               ))}
             </div>
