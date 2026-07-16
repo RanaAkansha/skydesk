@@ -6,16 +6,12 @@ import Dashboard from './pages/Dashboard.jsx'
 import FlightDetails from './pages/FlightDetails.jsx'
 import SearchResults from './pages/SearchResults.jsx'
 import Bookings from './pages/Bookings.jsx'
-import SavedFlights from './pages/SavedFlights.jsx'
-import Wishlist from './pages/Wishlist.jsx'
-import TravelWallet from './pages/TravelWallet.jsx'
 import Offers from './pages/Offers.jsx'
 import Support from './pages/Support.jsx'
 import ExpenseReport from './pages/ExpenseReport.jsx'
 import AddExpense from './pages/AddExpense.jsx'
 import TripReport from './pages/TripReport.jsx'
 import ExpenseAnalytics from './pages/ExpenseAnalytics.jsx'
-import Settings from './pages/Settings.jsx'
 import DashboardLayout from './layouts/DashboardLayout.jsx'
 
 export default function App() {
@@ -98,52 +94,12 @@ export default function App() {
           }
         />
 
-        {/* Settings */}
-        <Route
-          path="/settings"
-          element={
-            <DashboardLayout>
-              <Settings />
-            </DashboardLayout>
-          }
-        />
-
         {/* Bookings */}
         <Route
           path="/bookings"
           element={
             <DashboardLayout>
               <Bookings />
-            </DashboardLayout>
-          }
-        />
-
-        {/* Saved Flights */}
-        <Route
-          path="/saved-flights"
-          element={
-            <DashboardLayout>
-              <SavedFlights />
-            </DashboardLayout>
-          }
-        />
-
-        {/* Wishlist */}
-        <Route
-          path="/wishlist"
-          element={
-            <DashboardLayout>
-              <Wishlist />
-            </DashboardLayout>
-          }
-        />
-
-        {/* Travel Wallet */}
-        <Route
-          path="/wallet"
-          element={
-            <DashboardLayout>
-              <TravelWallet />
             </DashboardLayout>
           }
         />
@@ -174,3 +130,4 @@ export default function App() {
     </BrowserRouter>
   )
 }
+

@@ -83,7 +83,7 @@ export default function SignUp() {
               id="fullName"
               name="fullName"
               type="text"
-              placeholder="Arjun Mehta"
+              placeholder="e.g. John Smith"
               value={form.fullName}
               onChange={handleChange}
               required

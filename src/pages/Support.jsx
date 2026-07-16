@@ -13,19 +13,19 @@ export default function Support() {
   const faqs = [
     {
       q: 'How do I cancel or reschedule my flight?',
-      a: 'Go to "Flight Bookings" page. Identify the confirmed flight booking card, and click the "Cancel Flight" button. Rescheduling can be requested by raising a support ticket below or contacting corporate desk.'
+      a: 'Go to the "Flight Bookings" page. Find the confirmed booking and click "Cancel Flight". To reschedule, please raise a support ticket below or contact our travel support team.'
     },
     {
-      q: 'What is the corporate travel allowance policy?',
-      a: 'Flight bookings are checked against standard travel policy constraints automatically. For senior product managers, standard allowances enforce Economy travel class with budget alerts.'
+      q: 'What is the flight booking and expense policy?',
+      a: 'Your flight options are filtered based on your preferred travel class and budget settings. Expense submissions flagged above the standard daily limit may require additional review before approval.'
     },
     {
       q: 'How long does refund settlement take?',
-      a: 'Cancelled flight bookings trigger instant automated wallet refunds. However, cash advance credit refunds to corporate bank accounts take 3-5 working days.'
+      a: 'Cancelled flight bookings trigger an automated wallet credit within 24 hours. Refunds to bank accounts may take 3–5 business days depending on your payment provider.'
     },
     {
       q: 'How can I submit expense receipts?',
-      a: 'Go to the "Expense Report" page, click "Add Expense" to record a new receipt. You can also view logs under "My Trips" for a consolidated breakdown.'
+      a: 'Go to the "Expense Report" page and click "Add Expense" to log a new receipt. You can view all expense logs under "My Trips" for a consolidated breakdown.'
     }
   ]
 
@@ -60,7 +60,7 @@ export default function Support() {
               <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
                 <Phone size={14} className="text-[#2563EB] shrink-0" />
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">24/7 Corporate Line</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">24/7 Helpline</span>
                   <span>+91 1800 200 4567</span>
                 </div>
               </div>
@@ -116,7 +116,7 @@ export default function Support() {
         {ticketCreated && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-2.5 text-xs text-green-700 font-semibold shadow-sm">
             <CheckCircle2 size={16} className="text-green-600" />
-            Support ticket created successfully! PENDING-REF-#{Math.floor(100000 + Math.random() * 900000)}
+            Support ticket created! Your reference: REF-{String(Date.now()).slice(-6)}
           </div>
         )}
 

@@ -4,10 +4,12 @@ import {
   MapPin, ChevronDown, ChevronUp, PlaneTakeoff,
   ReceiptText, PlusCircle, Calendar, IndianRupee
 } from 'lucide-react'
-import { useExpenseStore } from '../context/ExpenseContext'
-import { corporateBookings, trips, expenseCategories } from '../data/expenseData'
+import { useExpenseStore } from '../hooks/useExpenses'
+import expenseData from '../data/expenses.json'
 import { formatCurrency, formatDate } from '../utils/formatters'
 import StatusPill from '../components/StatusPill'
+
+const { flightBookings, trips, expenseCategories } = expenseData
 
 const tripStatusBadge = {
   Completed: 'bg-slate-100 text-slate-600',
@@ -21,7 +23,7 @@ export default function TripReport() {
 
   const tripData = useMemo(() => {
     return trips.map((trip) => {
-      const tripBookings = corporateBookings.filter((b) => b.tripId === trip.id)
+      const tripBookings = flightBookings.filter((b) => b.tripId === trip.id)
       const tripExpenses = expenses.filter((e) => e.tripId === trip.id)
       const expenseTotal = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0)
       const bookingTotal = tripBookings.reduce((sum, b) => sum + Number(b.price || 0), 0)

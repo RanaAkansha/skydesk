@@ -4,8 +4,10 @@ import {
   ChevronLeft, PlaneTakeoff, PlaneLanding, Clock, Users,
   ShieldCheck, CheckCircle2, ArrowRight, Tag
 } from 'lucide-react'
-import { flights, internationalFlights } from '../data/expenseData'
+import expenseData from '../data/expenses.json'
 import { formatCurrency } from '../utils/formatters'
+
+const { flights, internationalFlights } = expenseData
 
 const airlineLogos = {
   IndiGo: '6E',

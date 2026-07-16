@@ -1,5 +1,7 @@
 import { createContext, useContext, useState } from 'react'
-import { advances as seedAdvances } from '../data/expenseData'
+import expenseData from '../data/expenses.json'
+
+const { advances: seedAdvances } = expenseData
 
 const AdvancesContext = createContext(null)
 

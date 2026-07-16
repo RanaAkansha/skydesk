@@ -7,15 +7,17 @@ import {
   Wallet, Receipt, CheckCircle2, Clock,
   TrendingUp, Filter, PlaneTakeoff
 } from 'lucide-react'
-import { useExpenseStore } from '../context/ExpenseContext'
-import { useAdvances } from '../context/AdvancesContext'
-import {
-  expenseCategories, corporateBookings,
-  spendByWeek, spendByMonth, spendByYear,
-  categorySpendByWeek, categorySpendByMonth, categorySpendByYear
-} from '../data/expenseData'
+import { useExpenseStore } from '../hooks/useExpenses'
+import { useAdvances } from '../hooks/useAdvances'
+import expenseData from '../data/expenses.json'
 import { formatCurrency } from '../utils/formatters'
 import StatusPill from '../components/StatusPill'
+
+const {
+  expenseCategories, flightBookings,
+  spendByWeek, spendByMonth, spendByYear,
+  categorySpendByWeek, categorySpendByMonth, categorySpendByYear
+} = expenseData
 
 const rangeOptions = [
   { key: 'week', label: 'Weekly', data: spendByWeek, caption: 'Last 8 weeks' },
@@ -105,7 +107,7 @@ export default function ExpenseAnalytics() {
       .slice(0, 10)
   }, [expenses, catFilter])
 
-  const upcomingFlights = corporateBookings
+  const upcomingFlights = flightBookings
     .filter((b) => b.type === 'flight' && b.status === 'Confirmed')
     .slice(0, 3)
 

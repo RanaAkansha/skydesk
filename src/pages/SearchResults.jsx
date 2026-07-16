@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Calendar, Filter, ArrowRight, ArrowLeftRight, Clock, ShieldCheck, Tag, Info } from 'lucide-react'
-import { internationalFlights } from '../data/expenseData'
+import expenseData from '../data/expenses.json'
 import { formatCurrency } from '../utils/formatters'
+
+const { internationalFlights } = expenseData
 
 export default function SearchResults() {
   const navigate = useNavigate()

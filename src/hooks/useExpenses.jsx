@@ -1,5 +1,7 @@
 import { createContext, useContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { seedExpenses } from '../data/expenseData'
+import expenseData from '../data/expenses.json'
+
+const { seedExpenses } = expenseData
 
 // ── useExpenses hook ─────────────────────────
 

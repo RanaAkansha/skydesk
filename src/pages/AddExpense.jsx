@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { ReceiptText, CheckCircle2, ChevronLeft, AlertCircle } from 'lucide-react'
-import { useExpenseStore } from '../context/ExpenseContext'
-import { expenseCategories, trips } from '../data/expenseData'
+import { useExpenseStore } from '../hooks/useExpenses'
+import expenseData from '../data/expenses.json'
+
+const { expenseCategories, trips } = expenseData
 
 const today = () => new Date().toISOString().slice(0, 10)
 

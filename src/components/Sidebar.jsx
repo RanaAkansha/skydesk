@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import {
-  Home, MapPin, Ticket, Heart, Bookmark,
-  Wallet, Tag, HeadphonesIcon, Settings, LogOut,
+  Home, MapPin, Ticket, Tag, HeadphonesIcon, LogOut,
   ChevronRight, Receipt, TrendingUp
 } from 'lucide-react'
 
@@ -11,15 +10,11 @@ const navItems = [
   { label: 'Bookings', icon: Ticket, path: '/bookings' },
   { label: 'Expenses', icon: Receipt, path: '/expenses' },
   { label: 'Analytics', icon: TrendingUp, path: '/analytics' },
-  { label: 'Saved Flights', icon: Bookmark, path: '/saved-flights' },
-  { label: 'Wishlist', icon: Heart, path: '/wishlist' },
-  { label: 'Travel Wallet', icon: Wallet, path: '/wallet' },
   { label: 'Offers', icon: Tag, path: '/offers' },
 ]
 
 const bottomItems = [
   { label: 'Support', icon: HeadphonesIcon, path: '/support' },
-  { label: 'Settings', icon: Settings, path: '/settings' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {

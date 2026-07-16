@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusCircle, Trash2, Filter, Receipt, CheckCircle2, Clock, XCircle } from 'lucide-react'
-import { useExpenseStore } from '../context/ExpenseContext'
-import { expenseCategories } from '../data/expenseData'
+import { useExpenseStore } from '../hooks/useExpenses'
+import expenseData from '../data/expenses.json'
 import { formatCurrency, formatDate } from '../utils/formatters'
 import StatusPill from '../components/StatusPill'
+
+const { expenseCategories } = expenseData
 
 const statusFilters = ['All', 'Pending', 'Approved', 'Rejected']
 

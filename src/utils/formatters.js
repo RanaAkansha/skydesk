@@ -1,6 +1,5 @@
 // ─────────────────────────────────────────────
 //  Formatters utility
-//  Adapted from teammate's expense-module
 // ─────────────────────────────────────────────
 
 export const formatCurrency = (value) =>

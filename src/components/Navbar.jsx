@@ -124,10 +124,9 @@ export default function Navbar({ onMenuToggle, menuOpen }) {
                 <p className="text-xs text-slate-400 truncate">{profile.email}</p>
               </div>
               {[
-                { name: 'My Profile', path: '/settings' },
                 { name: 'My Trips', path: '/my-trips' },
-                { name: 'Travel Wallet', path: '/wallet' },
-                { name: 'Settings', path: '/settings' },
+                { name: 'My Bookings', path: '/bookings' },
+                { name: 'My Expenses', path: '/expenses' },
                 { name: 'Sign Out', path: '/signin' }
               ].map((item) => (
                 <button
