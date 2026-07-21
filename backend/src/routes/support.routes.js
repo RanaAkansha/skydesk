@@ -1,6 +1,4 @@
 // src/routes/support.routes.js
-// GET  /api/v1/support — list user's support tickets
-// POST /api/v1/support — create a support ticket
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';

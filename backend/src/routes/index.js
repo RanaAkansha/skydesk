@@ -1,11 +1,5 @@
 // src/routes/index.js
-// Aggregates all route modules into a single versioned router.
-// Mounted at /api/v1 in app.js.
-//
-// Adding a new resource:
-//   1. Create src/routes/newresource.routes.js
-//   2. Import it here
-//   3. Add: router.use('/newresources', newResourceRoutes);
+// Aggregates all route modules into a single router.
 
 import { Router } from 'express';
 import authRoutes    from './auth.routes.js';

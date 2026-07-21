@@ -1,5 +1,4 @@
 // src/routes/trip.routes.js
-// GET /api/v1/trips — user's trips
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';

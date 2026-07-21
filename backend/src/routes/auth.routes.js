@@ -1,8 +1,4 @@
 // src/routes/auth.routes.js
-// POST /api/v1/auth/register
-// POST /api/v1/auth/login
-// POST /api/v1/auth/forgot-password
-// GET  /api/v1/auth/me  (protected)
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';

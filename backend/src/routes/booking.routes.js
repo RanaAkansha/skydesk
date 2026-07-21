@@ -1,8 +1,4 @@
 // src/routes/booking.routes.js
-// GET    /api/v1/bookings          — user's bookings
-// POST   /api/v1/bookings          — create a booking
-// GET    /api/v1/bookings/:id      — single booking detail
-// PATCH  /api/v1/bookings/:id/cancel — cancel a booking
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';

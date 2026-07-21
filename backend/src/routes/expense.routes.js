@@ -1,7 +1,4 @@
 // src/routes/expense.routes.js
-// GET  /api/v1/expenses      — user's expenses (filterable: ?category=&status=&trip_id=)
-// POST /api/v1/expenses      — create expense
-// GET  /api/v1/expenses/:id  — single expense
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';

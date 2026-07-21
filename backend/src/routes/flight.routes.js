@@ -1,6 +1,4 @@
 // src/routes/flight.routes.js
-// GET /api/v1/flights        — search with ?origin=&destination=&date=
-// GET /api/v1/flights/:id    — single flight detail
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';
