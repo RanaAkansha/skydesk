@@ -15,6 +15,7 @@ import tripRoutes    from './trip.routes.js';
 import expenseRoutes from './expense.routes.js';
 import offerRoutes   from './offer.routes.js';
 import supportRoutes from './support.routes.js';
+import chatRoutes    from './chat.routes.js';
 
 const router = Router();
 
@@ -25,5 +26,6 @@ router.use('/trips',    tripRoutes);
 router.use('/expenses', expenseRoutes);
 router.use('/offers',   offerRoutes);
 router.use('/support',  supportRoutes);
+router.use('/chat',     chatRoutes);
 
 export default router;

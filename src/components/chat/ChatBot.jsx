@@ -2,37 +2,26 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, X, Send, Plane } from 'lucide-react'
 
-import bookings from '../data/bookings.json'
-import profile from '../data/profile.json'
-import offers from '../data/offers.json'
-import destinations from '../data/destinations.json'
-import travelTips from '../data/travelTips.json'
-import { advances as seedAdvances } from '../data/expenseData'
-import { useExpenseStore } from '../context/ExpenseContext.jsx'
-import { useAdvances } from '../context/AdvancesContext.jsx'
-import { getBotResponse, STARTER_SUGGESTIONS } from '../utils/chatbotEngine'
-import { isGeminiConfigured } from '../utils/geminiClient'
-
-const WELCOME_MESSAGE = {
-  id: 'welcome',
-  role: 'bot',
-  text: "Hi! I'm Skye, your SkyDesk assistant. Ask me about your flights, wallet, expenses, or let me suggest your next trip.",
-  quickReplies: STARTER_SUGGESTIONS,
-}
+import bookings from '../../data/bookings.json'
+import profile from '../../data/profile.json'
+import offers from '../../data/offers.json'
+import destinations from '../../data/destinations.json'
+import travelTips from '../../data/travelTips.json'
+import { advances as seedAdvances } from '../../data/expenseData'
+import { useExpenseStore } from '../../context/ExpenseContext.jsx'
+import { useAdvances } from '../../context/AdvancesContext.jsx'
+import { useChat } from '../../hooks/chat/useChat'
 
 export default function ChatBot() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [hasOpenedOnce, setHasOpenedOnce] = useState(false)
-  const [messages, setMessages] = useState([WELCOME_MESSAGE])
   const [input, setInput] = useState('')
-  const [typing, setTyping] = useState(false)
   const scrollRef = useRef(null)
-  const historyRef = useRef([]) // { role: 'user'|'model', text } — sent to Gemini for multi-turn context
 
-  // Expense/advance data comes from live app context so the bot
-  // sees the same numbers the user sees on-screen (including
-  // anything they've logged, since it persists to localStorage).
+  const { messages, typing, sendMessage } = useChat()
+
+  // Expense/advance data comes from live app context
   let expenseStore = null
   let advancesStore = null
   try {
@@ -76,41 +65,12 @@ export default function ChatBot() {
     advances: advancesStore?.advances ?? seedAdvances,
   })
 
-  const send = async (rawText) => {
+  const send = (rawText) => {
     const text = (rawText ?? input).trim()
     if (!text) return
 
-    const userMsg = { id: `u-${Date.now()}`, role: 'user', text }
-    setMessages((prev) => [...prev, userMsg])
+    sendMessage(text, buildContext(), navigate)
     setInput('')
-    setTyping(true)
-
-    try {
-      const ctx = buildContext()
-      const response = await getBotResponse(text, ctx, historyRef.current)
-      const botMsg = { id: `b-${Date.now()}`, role: 'bot', ...response }
-      setMessages((prev) => [...prev, botMsg])
-
-      // Keep a rolling window of recent turns for Gemini's multi-turn context.
-      historyRef.current = [
-        ...historyRef.current,
-        { role: 'user', text },
-        { role: 'model', text: response.text },
-      ].slice(-12)
-
-      const autoAction = response.actions?.find((a) => a.auto)
-      if (autoAction) {
-        setTimeout(() => navigate(autoAction.path), 400)
-      }
-    } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        { id: `b-${Date.now()}`, role: 'bot', text: "Sorry, I ran into a problem answering that. Mind trying again?" },
-      ])
-      console.error('Chatbot error:', err)
-    } finally {
-      setTyping(false)
-    }
   }
 
   const handleKeyDown = (e) => {
@@ -127,7 +87,7 @@ export default function ChatBot() {
         <button
           onClick={handleOpen}
           aria-label="Open SkyDesk Assistant"
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] shadow-xl shadow-blue-900/20 flex items-center justify-center hover:scale-105 transition-transform"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] shadow-xl shadow-blue-900/20 flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
         >
           {!hasOpenedOnce && (
             <span className="absolute inset-0 rounded-full bg-[#2563EB] animate-ping opacity-40" />
@@ -154,7 +114,7 @@ export default function ChatBot() {
             <button
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="p-1.5 rounded-full text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+              className="p-1.5 rounded-full text-white/80 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -189,15 +149,13 @@ export default function ChatBot() {
                 onClick={() => send()}
                 disabled={!input.trim()}
                 aria-label="Send message"
-                className="w-7 h-7 rounded-full bg-[#2563EB] disabled:bg-slate-300 flex items-center justify-center text-white transition-colors shrink-0"
+                className="w-7 h-7 rounded-full bg-[#2563EB] disabled:bg-slate-300 flex items-center justify-center text-white transition-colors shrink-0 cursor-pointer"
               >
                 <Send size={13} />
               </button>
             </div>
             <p className="text-[10px] text-slate-400 text-center mt-2">
-              {isGeminiConfigured()
-                ? 'Powered by Gemini, grounded in your SkyDesk data.'
-                : 'Local mode — add VITE_GEMINI_API_KEY to .env for smarter answers.'}
+              Powered by SkyDesk API & Gemini, grounded in your data.
             </p>
           </div>
         </div>
@@ -226,7 +184,7 @@ function ChatBubble({ message, onQuickReply, onAction }) {
             <button
               key={a.path + a.label}
               onClick={() => onAction(a)}
-              className="text-[11px] font-semibold text-[#2563EB] bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-full transition-colors"
+              className="text-[11px] font-semibold text-[#2563EB] bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
             >
               {a.label} →
             </button>
@@ -240,7 +198,7 @@ function ChatBubble({ message, onQuickReply, onAction }) {
             <button
               key={q}
               onClick={() => onQuickReply(q)}
-              className="text-[11px] font-medium text-slate-600 bg-white border border-slate-200 hover:border-[#2563EB]/40 hover:text-[#2563EB] px-2.5 py-1 rounded-full transition-colors"
+              className="text-[11px] font-medium text-slate-600 bg-white border border-slate-200 hover:border-[#2563EB]/40 hover:text-[#2563EB] px-2.5 py-1 rounded-full transition-colors cursor-pointer"
             >
               {q}
             </button>

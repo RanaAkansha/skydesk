@@ -1,9 +1,6 @@
+import { formatCurrency, formatDate } from '../formatters'
 
-
-import { formatCurrency, formatDate } from './formatters'
-import { askGemini, isGeminiConfigured } from './geminiClient'
-
-// ── Small FAQ knowledge base (not in app data, so it lives here) ──
+// ── Small FAQ knowledge base ──
 const FAQ = [
   {
     tags: ['baggage', 'luggage', 'bag allowance', 'check-in bag', 'checked bag'],
@@ -57,7 +54,6 @@ function includesAny(text, words) {
 }
 
 // ── Intent handlers ─────────────────────────────────────
-// Each returns null if it doesn't match, or a response object if it does.
 
 function intentGreeting(text) {
   if (/\b(hi|hello|hey|yo|namaste)\b/.test(text) && text.length < 25) {
@@ -196,10 +192,12 @@ function intentLogExpense(text, ctx) {
   }
   const amount = Number(amountMatch[1])
 
-  const categoryMap = { meals: 'meals', food: 'meals', lunch: 'meals', dinner: 'meals', breakfast: 'meals',
+  const categoryMap = {
+    meals: 'meals', food: 'meals', lunch: 'meals', dinner: 'meals', breakfast: 'meals',
     cab: 'transport', taxi: 'transport', transport: 'transport', uber: 'transport', ola: 'transport',
     hotel: 'accommodation', stay: 'accommodation', accommodation: 'accommodation',
-    call: 'communication', roaming: 'communication', sim: 'communication', communication: 'communication' }
+    call: 'communication', roaming: 'communication', sim: 'communication', communication: 'communication'
+  }
   let category = 'other'
   for (const [word, cat] of Object.entries(categoryMap)) {
     if (text.includes(word)) { category = cat; break }
@@ -323,14 +321,8 @@ function intentFallback() {
   }
 }
 
-// Deterministic intents: these actually DO something (log an
-// expense, navigate) so they must be handled locally and
-// reliably — they run before Gemini ever sees the message.
 const ACTION_INTENTS = [intentLogExpense, intentNavigate]
 
-// Conversational intents: used as an offline fallback if Gemini
-// isn't configured (no API key) or a request fails, so the bot
-// still works without an internet connection / API key.
 const FALLBACK_INTENTS = [
   intentGreeting,
   intentThanks,
@@ -347,45 +339,29 @@ const FALLBACK_INTENTS = [
   intentFAQ,
 ]
 
-function runLocalFallback(text, ctx) {
+/**
+ * Runs client-side action intents (logging, navigation).
+ * Returns response object if matched, or null.
+ */
+export function runClientAction(input, ctx) {
+  const text = input.toLowerCase().trim()
+  for (const intent of ACTION_INTENTS) {
+    const result = intent(text, ctx)
+    if (result) return result
+  }
+  return null
+}
+
+/**
+ * Runs local rules fallback engine.
+ */
+export function runLocalFallback(input, ctx) {
+  const text = input.toLowerCase().trim()
   for (const intent of FALLBACK_INTENTS) {
     const result = intent(text, ctx)
     if (result) return result
   }
   return intentFallback()
-}
-
-/**
- * Main entry point. Returns { text, quickReplies?, actions? }.
- *
- * Flow:
- * 1. Check deterministic actions first (log expense, navigate) —
- *    these run local code and must not depend on a network call.
- * 2. If a Gemini API key is configured, ask Gemini for a
- *    grounded, free-form answer using the app's real data.
- * 3. If Gemini isn't configured, or the request fails (offline,
- *    bad key, rate limit), fall back to the local rule-based
- *    engine so the chatbot still works.
- */
-export async function getBotResponse(input, ctx, history = []) {
-  const text = input.toLowerCase().trim()
-
-  for (const intent of ACTION_INTENTS) {
-    const result = intent(text, ctx)
-    if (result) return result
-  }
-
-  if (isGeminiConfigured()) {
-    try {
-      const reply = await askGemini(input, ctx, history)
-      return { text: reply }
-    } catch (err) {
-      console.warn('Gemini request failed, falling back to local answers:', err.message)
-      return runLocalFallback(text, ctx)
-    }
-  }
-
-  return runLocalFallback(text, ctx)
 }
 
 export const STARTER_SUGGESTIONS = [

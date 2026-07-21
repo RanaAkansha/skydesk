@@ -21,7 +21,9 @@ const router = Router();
 router.use(authLimiter);
 
 router.post('/register',        registerRules,       validate, authController.register);
+router.post('/signup',          registerRules,       validate, authController.register);
 router.post('/login',           loginRules,          validate, authController.login);
+router.post('/signin',          loginRules,          validate, authController.login);
 router.post('/forgot-password', forgotPasswordRules, validate, authController.forgotPassword);
 
 // Protected

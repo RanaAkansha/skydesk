@@ -53,15 +53,9 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// ─── API Routes (added phase by phase) ───────────────────────
+import apiRouter from './src/routes/index.js';
 
-// Phase 2 → import authRoutes from './src/routes/auth.js'
-// Phase 3 → import flightRoutes from './src/routes/flights.js'
-// Phase 4 → import bookingRoutes from './src/routes/bookings.js'
-// Phase 5 → import tripRoutes from './src/routes/trips.js'
-// Phase 6 → import expenseRoutes from './src/routes/expenses.js'
-// Phase 7 → import offerRoutes from './src/routes/offers.js'
-// Phase 8 → import supportRoutes from './src/routes/support.js'
+app.use('/api', apiRouter);
 
 // ─── 404 Handler ──────────────────────────────────────────────
 
