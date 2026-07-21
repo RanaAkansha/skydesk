@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Sidebar from '../components/Sidebar.jsx'
-
+import ChatBot from '../components/ChatBot.jsx'
 const SIDEBAR_WIDTH = 242
 
 export default function DashboardLayout({ children }) {
@@ -28,6 +28,8 @@ export default function DashboardLayout({ children }) {
           {children}
         </div>
       </main>
+
+      <ChatBot />
     </div>
   )
 }
