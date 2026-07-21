@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Search, Plane, ChevronDown, Menu, X, CheckCheck } from 'lucide-react'
 import profile from '../data/profile.json'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Navbar({ onMenuToggle, menuOpen }) {
   const navigate = useNavigate()
+  const { user, signout } = useAuth()
   const [notifOpen, setNotifOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifications, setNotifications] = useState([
@@ -12,7 +14,12 @@ export default function Navbar({ onMenuToggle, menuOpen }) {
     { id: 2, text: 'Exclusive offer: 20% off international flights!', time: '5h ago', unread: true },
     { id: 3, text: 'Web check-in opens for your Delhi–Mumbai flight.', time: '1d ago', unread: false },
   ])
-
+  const displayName = user?.fullName || profile.name
+  const displayFirstName = user?.fullName?.split(' ')[0] || profile.firstName
+  const displayEmail = user?.email || profile.email
+  const initials = user?.fullName
+    ? user.fullName.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()
+    : profile.initials
   const unreadCount = notifications.filter(n => n.unread).length
 
   const markAllRead = () => {
@@ -126,6 +133,7 @@ export default function Navbar({ onMenuToggle, menuOpen }) {
               {[
                 { name: 'My Trips', path: '/my-trips' },
                 { name: 'My Bookings', path: '/bookings' },
+                { name: 'Travel Wallet', path: '/wallet' },
                 { name: 'My Expenses', path: '/expenses' },
                 { name: 'Sign Out', path: '/signin' }
               ].map((item) => (
