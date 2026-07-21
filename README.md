@@ -66,23 +66,30 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
-Copy `.env.example` templates to `.env` in both folders and adjust the settings:
 
-**Frontend Environment (`frontend/.env`)**:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+Create the `.env` files from their corresponding templates:
 
-**Backend Environment (`backend/.env`)**:
-```env
-PORT=5000
-DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/skydesk
-JWT_SECRET=your_strong_jwt_secret_key
-JWT_EXPIRES_IN=7d
-NODE_ENV=development
-FRONTEND_URL=http://localhost:5173
-GEMINI_API_KEY=your_google_gemini_api_key
-```
+**Frontend Setup**:
+* **macOS/Linux**: `cp frontend/.env.example frontend/.env`
+* **Windows**: `copy frontend\.env.example frontend\.env`
+
+**Backend Setup**:
+* **macOS/Linux**: `cp backend/.env.example backend/.env`
+* **Windows**: `copy backend\.env.example backend\.env`
+
+#### Environment Variables Breakdown
+
+##### Frontend (`frontend/.env`)
+* `VITE_API_URL`: The URL prefix of the Express backend API. Set to `http://localhost:5000/api` for local runs.
+
+##### Backend (`backend/.env`)
+* `PORT`: The port number the server runs on (defaults to `5000`).
+* `DATABASE_URL`: PostgreSQL connection URL used by Prisma.
+* `JWT_SECRET`: Secret key used to sign and verify JSON Web Tokens.
+* `JWT_EXPIRES_IN`: Authentication session expiration length (e.g. `7d`).
+* `NODE_ENV`: The environment state, set to `development` or `production`.
+* `FRONTEND_URL`: React client URL used for CORS validation (defaults to `http://localhost:5173`).
+* `GEMINI_API_KEY`: Google Gemini API key required for chatbot response grounding.
 
 ### 3. Generate Database Client & Seed Data
 Navigate to the `backend/` directory to run migrations and populate initial data (such as airports, flights, and expense categories):
