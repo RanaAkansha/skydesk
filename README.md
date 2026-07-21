@@ -1,150 +1,136 @@
-# SkyDesk – Travel & Expense Management System
+# SkyDesk – Travel & Expense Management Monorepo
 
-A modern **Travel & Expense Management System** built with **React, Vite, and Tailwind CSS**. The application provides an intuitive interface for managing flight bookings, business trips, travel expenses, and travel-related services.
+SkyDesk is a modern **Travel & Expense Management System** built with **React + Vite** on the frontend, **Express + Node.js** on the backend, and **PostgreSQL** using the **Prisma ORM**.
 
-> Developed as part of the **ScholarHat Full Stack JavaScript Internship**.
-
----
-
-## Overview
-
-SkyDesk is a frontend application designed to simplify business travel management. It enables users to search flights, manage bookings, track travel expenses, and access travel-related services through a clean and responsive interface.
-
-The project currently uses **dummy JSON data** and is structured to support seamless backend integration in future development.
+This repository is structured as a professional, production-ready monorepo using **npm workspaces**.
 
 ---
 
-## Features
+## 1. Project Architecture
 
-### Authentication
-
-- User Registration
-- User Login
-- Forgot Password
-
-### Flight Management
-
-- Search Flights
-- View Flight Details
-- My Bookings
-- My Trips
-
-### Expense Management
-
-- Add Expenses
-- Expense Reports
-- Expense Analytics
-
-### Additional Features
-
-- Travel Offers
-- Travel Tips & Alerts
-- Customer Support
-- Responsive Dashboard
-
----
-
-## Tech Stack
-
-| Technology | Purpose |
-|------------|----------|
-| React.js | Frontend Framework |
-| Vite | Build Tool |
-| Tailwind CSS | Styling |
-| React Router DOM | Client-side Routing |
-| Lucide React | Icons |
-| JavaScript (ES6+) | Programming Language |
-| JSON | Mock Data |
-
----
-
-## Project Structure
+The application is split into two modular workspace packages:
 
 ```text
-src/
+skydesk/
+├── frontend/             ← React + Vite frontend application
+│   ├── public/           ← Static client assets (logos, icons)
+│   ├── src/              ← React components, pages, context, and hooks
+│   ├── package.json      ← Client-specific dependencies
+│   ├── vite.config.js    ← Vite configurations & Tailwind CSS setup
+│   └── ...
 │
-├── assets/
-├── components/
-├── data/
-├── hooks/
-├── layouts/
-├── pages/
-├── utils/
+├── backend/              ← Express REST API & Database layer
+│   ├── src/
+│   │   ├── config/       ← Environment validation & Database pool connection
+│   │   ├── controllers/  ← Request/response handlers (Auth, Trips, Bookings, Expenses, Chat)
+│   │   ├── middleware/   ← Global handlers, Rate Limiters, JWT Auth verification
+│   │   ├── routes/       ← Express Router configuration (bundled at /api)
+│   │   ├── services/     ← Business logic & database interaction services
+│   │   ├── utils/        ← Response formatters, Custom Errors, JWT helpers
+│   │   └── validators/   ← Request input validations (express-validator)
+│   ├── prisma/           ← Prisma ORM Schema, Migrations, and Seed script
+│   ├── server.js         ← Express server entry point
+│   ├── package.json      ← Server-specific dependencies
+│   └── ...
 │
-├── App.jsx
-└── main.jsx
+├── package.json          ← Workspaces root container & shared scripts
+├── .gitignore            ← Global file exclusions (node_modules, .env)
+└── README.md             ← Reorganization guide & instructions
 ```
 
 ---
 
-## Pages
+## 2. Tech Stack
 
-- Login
-- Register
-- Forgot Password
-- Dashboard
-- Search Flights
-- Flight Details
-- My Bookings
-- My Trips
-- Expense Report
-- Expense Analytics
-- Offers
-- Support
+| Layer | Technologies | Purpose |
+| :--- | :--- | :--- |
+| **Frontend** | React (v19), Vite, Tailwind CSS, Lucide icons, Recharts | User Interface, Charts, Styling |
+| **Backend** | Node.js (ESM), Express.js, Helmet, CORS, Morgan | REST API framework, security headers |
+| **Database** | PostgreSQL, Prisma ORM, PG Pool | Persistent relational database and migrations |
+| **Authentication**| JWT, bcryptjs | Secure authentication & role-based route protection |
+| **AI Integration**| Google Gemini API (`gemini-2.5-flash`) | Chatbot assistant grounding |
 
 ---
 
-## Getting Started
+## 3. Setup & Installation
 
-### Clone the repository
+### Prerequisites
+* Node.js v18 or higher
+* npm v9 or higher (workspace support is native)
+* PostgreSQL 14 or higher
 
-```bash
-git clone https://github.com/RanaAkansha/skydesk.git
-```
-
-### Navigate to the project
-
-```bash
-cd skydesk
-```
-
-### Install dependencies
-
+### 1. Install Workspace Dependencies
+Run the install command from the root workspace directory. This will automatically install dependencies for both the `frontend` and `backend` subprojects:
 ```bash
 npm install
 ```
 
-### Start the development server
+### 2. Configure Environment Variables
+Copy `.env.example` templates to `.env` in both folders and adjust the settings:
 
+**Frontend Environment (`frontend/.env`)**:
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+**Backend Environment (`backend/.env`)**:
+```env
+PORT=5000
+DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/skydesk
+JWT_SECRET=your_strong_jwt_secret_key
+JWT_EXPIRES_IN=7d
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+GEMINI_API_KEY=your_google_gemini_api_key
+```
+
+### 3. Generate Database Client & Seed Data
+Navigate to the `backend/` directory to run migrations and populate initial data (such as airports, flights, and expense categories):
 ```bash
-npm run dev
+cd backend
+npx prisma generate
+npx prisma db push
+npm run db:seed
 ```
 
 ---
 
-## Responsive Design
+## 4. Running the Project Locally
 
-The application is optimized for:
+You can launch both packages directly from the root repository directory using workspace scripts:
 
-- Desktop
-- Tablet
-- Mobile Devices
+### Start the Frontend Dev Server
+```bash
+npm run dev:frontend
+```
+This boots up the Vite React application, typically running at [http://localhost:5173](http://localhost:5173).
 
----
-
-## Future Enhancements
-
-- Backend Integration
-- User Authentication with JWT
-- Flight Search API Integration
-- Payment Gateway
-- Database Integration
-- Real-time Booking Updates
-- User Profile Management
-- Notifications
+### Start the Backend API Server
+```bash
+npm run dev:backend
+```
+This runs the Nodemon Express backend server, typically running at [http://localhost:5000](http://localhost:5000).
 
 ---
 
-## License
+## 5. API Overview
 
-This project is created for educational and internship purposes.
+All routes are mounted at the `/api` prefix:
+
+### Authentication
+* `POST /api/auth/signup` - Register a new user
+* `POST /api/auth/signin` - Authenticate user & retrieve JWT
+* `GET /api/auth/me` - Fetch profile of active authenticated user (Protected)
+
+### Travel & Bookings
+* `GET /api/flights` - Search flights (Protected)
+* `POST /api/bookings` - Create new flight booking (Protected)
+* `GET /api/bookings` - View user bookings (Protected)
+* `GET /api/trips` - View aggregated trips (Protected)
+
+### Expenses
+* `POST /api/expenses` - Log a new travel expense (Protected)
+* `GET /api/expenses` - Retrieve logged expenses (Protected)
+
+### Chatbot grounding
+* `POST /api/chat` - Queries the chatbot assistant grounded in user context (Protected)
