@@ -15,6 +15,9 @@ import errorHandler from './src/middleware/errorHandler.js';
 
 const app = express();
 
+// Trust proxy header in production (e.g. Render load balancer)
+app.set('trust proxy', 1);
+
 // ─── Security Middleware ───────────────────────────────────────
 
 // Helmet sets security-related HTTP response headers
