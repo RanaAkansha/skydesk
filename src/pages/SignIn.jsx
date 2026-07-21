@@ -1,25 +1,40 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
 import AuthLayout from '../components/AuthLayout.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function SignIn() {
-  const [email, setEmail] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { signin } = useAuth()
+
+  const [email, setEmail] = useState(location.state?.prefillEmail || '')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
-  const navigate = useNavigate()
+  const [submitting, setSubmitting] = useState(false)
+  const justRegistered = Boolean(location.state?.justRegistered)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     if (!email || !password) {
       setError('Please fill in all fields.')
       return
     }
     setError('')
-    // Static redirect to dashboard
-    navigate('/dashboard')
+    setSubmitting(true)
+    try {
+      await signin({ email, password })
+      // If they were redirected here from a protected page, send them back to it.
+      const redirectTo = location.state?.from || '/dashboard'
+      navigate(redirectTo, { replace: true })
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -28,6 +43,11 @@ export default function SignIn() {
       subtitle="Sign in to manage your trips and bookings."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        {justRegistered && !error && (
+          <div className="p-3 text-xs text-green-700 bg-green-50 border border-green-150 rounded-lg">
+            Account created! Sign in with your new password to continue.
+          </div>
+        )}
         {error && (
           <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-150 rounded-lg">
             {error}
@@ -96,9 +116,11 @@ export default function SignIn() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer"
+          disabled={submitting}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer flex items-center justify-center gap-2"
         >
-          Sign In
+          {submitting && <Loader2 size={16} className="animate-spin" />}
+          {submitting ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 

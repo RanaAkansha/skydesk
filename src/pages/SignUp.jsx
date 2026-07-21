@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { User, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
 import AuthLayout from '../components/AuthLayout.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -14,7 +15,9 @@ export default function SignUp() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
+  const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
+  const { signup } = useAuth()
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target
@@ -54,7 +57,7 @@ export default function SignUp() {
     return errs
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     const validationErrors = validate()
     if (Object.keys(validationErrors).length > 0) {
@@ -62,8 +65,29 @@ export default function SignUp() {
       return
     }
     setErrors({})
-    // Redirect to dashboard
-    navigate('/dashboard')
+    setSubmitting(true)
+    try {
+      await signup({
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        password: form.password,
+      })
+      // Deliberately not auto-logged-in — send them to Sign In to authenticate fresh.
+      navigate('/signin', {
+        replace: true,
+        state: { justRegistered: true, prefillEmail: form.email.trim() },
+      })
+    } catch (err) {
+      // Server can return field-specific errors (e.g. "email already in use")
+      if (err.fields) {
+        setErrors(err.fields)
+      } else {
+        setErrors({ form: err.message || 'Something went wrong. Please try again.' })
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -72,6 +96,12 @@ export default function SignUp() {
       subtitle="Create your account to book flights and manage your trips."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        {errors.form && (
+          <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-150 rounded-lg">
+            {errors.form}
+          </div>
+        )}
+
         {/* Full Name */}
         <div className="flex flex-col">
           <label htmlFor="fullName" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
@@ -83,7 +113,7 @@ export default function SignUp() {
               id="fullName"
               name="fullName"
               type="text"
-              placeholder="e.g. John Smith"
+              placeholder="Arjun Mehta"
               value={form.fullName}
               onChange={handleChange}
               required
@@ -221,9 +251,11 @@ export default function SignUp() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 mt-2 cursor-pointer"
+          disabled={submitting}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 mt-2 cursor-pointer flex items-center justify-center gap-2"
         >
-          Create Account
+          {submitting && <Loader2 size={16} className="animate-spin" />}
+          {submitting ? 'Creating account...' : 'Create Account'}
         </button>
       </form>
 
