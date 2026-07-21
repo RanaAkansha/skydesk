@@ -57,6 +57,22 @@ import apiRouter from './src/routes/index.js';
 
 app.use('/api', apiRouter);
 
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "SkyDesk Backend is running 🚀",
+    version: "1.0.0"
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────
 
 app.use((_req, res) => {
