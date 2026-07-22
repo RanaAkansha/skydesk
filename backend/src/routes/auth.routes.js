@@ -13,16 +13,19 @@ import {
 
 const router = Router();
 
-// Apply the stricter auth rate limiter to all auth routes
+// Apply auth rate limiter
 router.use(authLimiter);
 
-router.post('/register',        registerRules,       validate, authController.register);
-router.post('/signup',          registerRules,       validate, authController.register);
-router.post('/login',           loginRules,          validate, authController.login);
-router.post('/signin',          loginRules,          validate, authController.login);
+// Public authentication routes
+router.post('/signup',          registerRules,       validate, authController.signup);
+router.post('/signin',          loginRules,          validate, authController.signin);
+
+// Compatibility alias routes
+router.post('/register',        registerRules,       validate, authController.signup);
+router.post('/login',           loginRules,          validate, authController.signin);
 router.post('/forgot-password', forgotPasswordRules, validate, authController.forgotPassword);
 
-// Protected
-router.get('/me', authenticate, authController.getMe);
+// Protected route
+router.get('/me',               authenticate,                  authController.getMe);
 
 export default router;

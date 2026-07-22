@@ -1,11 +1,5 @@
 // src/middleware/auth.js
 // JWT authentication + role-based authorization middleware.
-//
-// Usage in routes:
-//   import { authenticate, authorize } from '../middleware/auth.js';
-//
-//   router.get('/admin-only', authenticate, authorize('admin'), handler);
-//   router.get('/any-user',   authenticate, handler);
 
 import { verifyToken } from '../utils/jwt.js';
 import AppError from '../utils/AppError.js';
@@ -13,23 +7,28 @@ import { query } from '../config/db.js';
 
 /**
  * authenticate
- * Reads the JWT from the Authorization header, verifies it, and attaches
- * the user row to req.user. Calls next(err) on any failure.
+ * Reads JWT from Authorization header (Bearer <token>), verifies it,
+ * checks database for active user, and attaches user to req.user.
+ * Returns 401 if missing, invalid, or expired.
  */
 export const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new AppError('Access denied. No token provided.', 401);
+      throw new AppError('No token provided.', 401);
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token); // throws AppError if invalid/expired
+    if (!token) {
+      throw new AppError('No token provided.', 401);
+    }
 
-    // Fetch a fresh user row so revoked/deleted users are rejected immediately
+    const decoded = verifyToken(token); // throws AppError with status 401 if invalid/expired
+
+    // Fetch user row from DB to confirm user still exists
     const result = await query(
-      'SELECT id, name, email, role, avatar_url, created_at FROM users WHERE id = $1',
+      'SELECT id, name, email, role, avatar_url, created_at, updated_at FROM users WHERE id = $1',
       [decoded.id]
     );
 
@@ -37,7 +36,7 @@ export const authenticate = async (req, res, next) => {
       throw new AppError('User no longer exists.', 401);
     }
 
-    req.user = result.rows[0]; // available in all downstream handlers
+    req.user = result.rows[0];
     next();
   } catch (err) {
     next(err);
@@ -46,10 +45,7 @@ export const authenticate = async (req, res, next) => {
 
 /**
  * authorize(...roles)
- * Factory that returns a middleware restricting access to the given roles.
- * Must be used AFTER authenticate (requires req.user to be set).
- *
- * @param {...string} roles  e.g. authorize('admin') or authorize('admin', 'employee')
+ * Restricts route access to specified user roles.
  */
 export const authorize = (...roles) =>
   (req, _res, next) => {

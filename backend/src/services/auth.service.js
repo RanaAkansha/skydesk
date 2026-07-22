@@ -1,90 +1,105 @@
 // src/services/auth.service.js
-// All authentication business logic.
-// This module has no knowledge of HTTP (no req/res) — pure business rules.
+// Authentication business logic.
+// Interacts with database via db.query() using parameterized SQL only.
 
 import bcrypt from 'bcryptjs';
 import { query } from '../config/db.js';
 import { signToken } from '../utils/jwt.js';
 import AppError from '../utils/AppError.js';
-import { env } from '../config/env.js';
 
 /**
  * Register a new user.
- * Returns a signed JWT and the public user object.
- *
+ * 
  * @param {string} name
  * @param {string} email
  * @param {string} password  Plain-text password (will be hashed)
- * @returns {{ token: string, user: object }}
+ * @returns {Promise<{ user: object }>}
  */
-export const register = async (name, email, password) => {
-  // Check for duplicate email first (better error message than PG constraint)
+export const signup = async (name, email, password) => {
+  // Check for existing duplicate email
   const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
   if (existing.rows.length > 0) {
     throw new AppError('An account with this email already exists.', 409);
   }
 
-  const saltRounds = parseInt(env.bcryptSaltRounds, 10) || 12;
+  // Hash password with bcrypt
+  const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+  // Insert user into users table with parameterized query
   const result = await query(
     `INSERT INTO users (name, email, password)
      VALUES ($1, $2, $3)
-     RETURNING id, name, email, role, avatar_url, created_at`,
+     RETURNING id, name, email, role, avatar_url, created_at, updated_at`,
     [name, email, hashedPassword]
   );
 
   const user = result.rows[0];
-  const token = signToken({ id: user.id, role: user.role });
-
-  return { token, user };
+  return { user };
 };
 
 /**
- * Authenticate a user with email + password.
- * Returns a signed JWT and the public user object.
- *
+ * Legacy register method signature for backward compatibility.
+ */
+export const register = signup;
+
+/**
+ * Authenticate user with email and password.
+ * 
  * @param {string} email
  * @param {string} password  Plain-text password
- * @returns {{ token: string, user: object }}
+ * @returns {Promise<{ token: string, user: object }>}
  */
-export const login = async (email, password) => {
-  // Fetch the user (include password hash for comparison)
+export const signin = async (email, password) => {
+  // Fetch user including password hash for bcrypt compare
   const result = await query(
-    'SELECT id, name, email, password, role, avatar_url, created_at FROM users WHERE email = $1',
+    'SELECT id, name, email, password, role, avatar_url, created_at, updated_at FROM users WHERE email = $1',
     [email]
   );
 
-  // Use a generic message to prevent user enumeration attacks
-  const INVALID_CREDENTIALS = 'Invalid email or password.';
+  const INVALID_CREDENTIALS_MSG = 'Invalid email or password.';
 
   if (result.rows.length === 0) {
-    throw new AppError(INVALID_CREDENTIALS, 401);
+    throw new AppError(INVALID_CREDENTIALS_MSG, 401);
   }
 
   const user = result.rows[0];
-  const passwordMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.password);
 
-  if (!passwordMatch) {
-    throw new AppError(INVALID_CREDENTIALS, 401);
+  if (!isMatch) {
+    throw new AppError(INVALID_CREDENTIALS_MSG, 401);
   }
 
-  // Strip the password hash before returning
-  const { password: _pwd, ...publicUser } = user;
-  const token = signToken({ id: publicUser.id, role: publicUser.role });
+  // Strip password hash from returned user object
+  const { password: _pwd, ...userWithoutPassword } = user;
 
-  return { token, user: publicUser };
+  // Generate JWT token
+  const token = signToken({
+    id: userWithoutPassword.id,
+    email: userWithoutPassword.email,
+    role: userWithoutPassword.role,
+  });
+
+  return {
+    token,
+    user: userWithoutPassword,
+  };
 };
 
 /**
- * Fetch the authenticated user's public profile.
- *
+ * Legacy login method signature for backward compatibility.
+ */
+export const login = signin;
+
+/**
+ * Fetch profile by user ID.
+ * 
  * @param {number} userId
- * @returns {object} User row (no password)
+ * @returns {Promise<object>} User object without password
  */
 export const getProfile = async (userId) => {
   const result = await query(
-    'SELECT id, name, email, role, avatar_url, created_at FROM users WHERE id = $1',
+    'SELECT id, name, email, role, avatar_url, created_at, updated_at FROM users WHERE id = $1',
     [userId]
   );
 
@@ -96,15 +111,11 @@ export const getProfile = async (userId) => {
 };
 
 /**
- * Forgot password — stub.
- * In production this would send a reset email via SendGrid/SES.
- * Returns success regardless of whether the email exists (prevents enumeration).
- *
+ * Password reset request stub.
+ * 
  * @param {string} email
  */
 export const forgotPassword = async (email) => {
-  // Log the request (in production: queue an email job)
   console.log(`[AUTH] Password reset requested for: ${email}`);
-  // Always returns success to prevent email enumeration
   return true;
 };

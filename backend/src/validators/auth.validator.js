@@ -1,5 +1,5 @@
 // src/validators/auth.validator.js
-// express-validator rule chains for the /api/v1/auth/* endpoints.
+// express-validator rule chains for auth endpoints.
 
 import { body, validationResult } from 'express-validator';
 
@@ -18,12 +18,18 @@ export const validate = (req, res, next) => {
   next(err);
 };
 
-/** Rules for POST /api/v1/auth/register */
+/** Rules for POST /api/auth/signup */
 export const registerRules = [
-  body('name')
-    .trim()
-    .notEmpty().withMessage('Name is required.')
-    .isLength({ max: 150 }).withMessage('Name must be 150 characters or fewer.'),
+  body().custom((value, { req }) => {
+    const name = req.body.fullName || req.body.name;
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      throw new Error('Full name is required.');
+    }
+    if (name.length > 150) {
+      throw new Error('Full name must be 150 characters or fewer.');
+    }
+    return true;
+  }),
 
   body('email')
     .trim()
@@ -34,18 +40,9 @@ export const registerRules = [
   body('password')
     .notEmpty().withMessage('Password is required.')
     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
-
-  body('confirmPassword')
-    .notEmpty().withMessage('Please confirm your password.')
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Passwords do not match.');
-      }
-      return true;
-    }),
 ];
 
-/** Rules for POST /api/v1/auth/login */
+/** Rules for POST /api/auth/signin */
 export const loginRules = [
   body('email')
     .trim()
@@ -57,7 +54,7 @@ export const loginRules = [
     .notEmpty().withMessage('Password is required.'),
 ];
 
-/** Rules for POST /api/v1/auth/forgot-password */
+/** Rules for POST /api/auth/forgot-password */
 export const forgotPasswordRules = [
   body('email')
     .trim()

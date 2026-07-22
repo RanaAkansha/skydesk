@@ -1,15 +1,15 @@
-// server.js
+// src/server.js
 // Main entry point for the SkyDesk REST API.
 // Loads environment → registers middleware → mounts routes → starts server.
 
-import './src/config/env.js';       // Must be first — validates env vars before anything else
+import './config/env.js';       // Must be first — validates env vars before anything else
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 
-import { env } from './src/config/env.js';
-import errorHandler from './src/middleware/errorHandler.js';
+import { env } from './config/env.js';
+import errorHandler from './middleware/errorHandler.js';
 
 // ─── App Setup ────────────────────────────────────────────────
 
@@ -72,7 +72,7 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-import apiRouter from './src/routes/index.js';
+import apiRouter from './routes/index.js';
 
 app.use('/api', apiRouter);
 
